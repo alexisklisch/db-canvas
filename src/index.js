@@ -33,7 +33,37 @@ function drawTable(x, y, tableName, columns) {
     ctx.textAlign = 'right';
     ctx.fillText(column.type, x + 190, columnY + 20);
     ctx.textAlign = 'left';
+
+    // Agregar flecha si hay una referencia
+    if (column.ref) {
+      const refTable = tables.find((table) => table.columns.some((col) => col.id === column.ref));
+      if (refTable) {
+        const refColumn = refTable.columns.find((col) => col.id === column.ref);
+        drawArrow(
+          x + 200, // x del extremo derecho de la columna actual
+          columnY + 15, // y del centro de la columna actual
+          refTable.x, // x del extremo izquierdo de la columna referenciada
+          refTable.y + 15 // y del centro de la columna referenciada
+        );
+      }
+    }
   });
+}
+
+function drawArrow(x1, y1, x2, y2) {
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = '#D1D5DB';
+  ctx.lineWidth = 2;
+
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  const arrowSize = 10;
+  ctx.lineTo(x2 - arrowSize * Math.cos(angle - Math.PI / 6), y2 - arrowSize * Math.sin(angle - Math.PI / 6));
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - arrowSize * Math.cos(angle + Math.PI / 6), y2 - arrowSize * Math.sin(angle + Math.PI / 6));
+
+  ctx.stroke();
 }
 
 function handleMouseDown(event) {
