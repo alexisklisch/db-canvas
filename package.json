@@ -1,0 +1,6 @@
+{
+    "name": "db-canvas",
+    "version": "0.0.1",
+    "author": "Alexis Fleitas Klisch <unbosquense@gmail.com>",
+    "main": "src/index.js"
+}
