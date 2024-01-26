@@ -8,14 +8,44 @@ canvas.height = window.innerHeight;
 const tables = [];
 const hoveredTables = [];
 
-function drawTable(x, y, tableName, columns) {
-  ctx.strokeStyle = '#242424';
-  ctx.fillStyle = '#1F2937';
-  ctx.fillRect(x, y, 200, 30 + (columns.length) * 30);
-  ctx.strokeRect(x, y, 200, 30 + (columns.length) * 30);
+function drawTable(x, y, tableName, columns, config = {
+  theme: {
+    color: {
+      border: '#E6E6E6',
+      title: '#8E3F86',
+      titleBg: '#EDB7E7',
+      colEven: '#F3F3F3',
+      colOdd: '#F3F3F3',
+      colName: '#585858',
+      colType: '#808080',
+    }
+  }
+}) {
+  const { theme: { color }} =  config
 
-  ctx.fillStyle = 'whitesmoke';
-  ctx.font = '16px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
+  ctx.shadowColor = "#EEEAEA"
+  ctx.shadowBlur = 12
+  ctx.strokeStyle = color.border;
+  ctx.fillStyle = color.titleBg
+
+  // Redondear bordes
+  ctx.beginPath();
+  ctx.moveTo(x + 10, y);
+  // Redondear 6px izquierda superior
+  ctx.arcTo(x, y, x, y + 10, 6);
+  ctx.lineTo(x, y + 30 + (columns.length) * 30);
+  ctx.arcTo(x, y + 30 + (columns.length) * 30, x + 10, y + 30 + (columns.length) * 30, 10);
+  ctx.lineTo(x + 190, y + 30 + (columns.length) * 30 );
+  ctx.arcTo(x + 200, y + 30 + (columns.length) * 30 + 10, x + 200, y + 30 + (columns.length) * 30, 10);
+  ctx.lineTo(x + 200, y + 10);
+  // Redondear 6px derecha superior
+  ctx.arcTo(x + 200, y, x + 190, y, 6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = color.title;
+  ctx.font = 'bold 16px Arial, Tahoma, Geneva, Verdana, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'ideographic';
   ctx.fillText(tableName, x + 100, y + 25);
@@ -24,13 +54,14 @@ function drawTable(x, y, tableName, columns) {
   columns.forEach((column, index) => {
     const columnY = y + 30 + index * 30;
     ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = index % 2 === 0 ? '#374151' : '#1F2937';
-    ctx.font = 'normal 14px "Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
+    ctx.fillStyle = index % 2 === 0 ? color.colOdd : color.colEven;
+    ctx.font = 'normal 14px Arial, Tahoma, Geneva, Verdana, sans-serif';
     ctx.fillRect(x, columnY, 200, 30);
-    ctx.fillStyle = '#D1D5DB';
+    ctx.fillStyle = color.colName;
     ctx.fillText(column.name, x + 10, columnY + 20);
 
     ctx.textAlign = 'right';
+    ctx.fillStyle = color.colType;
     ctx.fillText(column.type, x + 190, columnY + 20);
     ctx.textAlign = 'left';
 
@@ -54,7 +85,7 @@ function drawArrow(x1, y1, x2, y2) {
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
-  ctx.strokeStyle = '#D1D5DB';
+  ctx.strokeStyle = 'darkgrey';
   ctx.lineWidth = 2;
 
   const angle = Math.atan2(y2 - y1, x2 - x1);
